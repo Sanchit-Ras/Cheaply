@@ -1,17 +1,4 @@
 import re
-from collections import defaultdict
-
-def group_products_by_brand(products):
-    """
-    Groups products by their brand or type based on keywords in titles.
-    """
-    groups = defaultdict(list)
-    for product in products:
-        # Extract the first word or main brand as the group key (e.g., "Tide", "Surf Excel")
-        brand_match = re.search(r'^\w+', product['title'])
-        brand = brand_match.group(0) if brand_match else "Unknown"
-        groups[brand].append(product)
-    return groups
 
 def normalize_prices(products):
     """
@@ -50,29 +37,33 @@ def normalize_prices(products):
         normalized_products.append(product)
     return normalized_products
 
-def rank_products_by_value(groups):
+def rank_products_globally(products):
     """
-    Ranks products within each group by price per unit.
+    Ranks all products globally by price per unit.
     """
-    ranked_groups = {}
-    for brand, products in groups.items():
-        # Sort products by price per unit, if available
-        ranked_groups[brand] = sorted(
-            products, 
-            key=lambda x: x['price_per_unit'] if isinstance(x['price_per_unit'], (int, float)) else float('inf')
-        )
-    return ranked_groups
+    ranked_products = sorted(
+        products,
+        key=lambda x: x['price_per_unit'] if isinstance(x['price_per_unit'], (int, float)) else float('inf')
+    )
+    return ranked_products
 
-def display_results(ranked_groups):
+def display_results(ranked_products):
     """
-    Displays the grouped and ranked results in a user-friendly format.
+    Displays the ranked results in a simple table format.
     """
     print("\n--- Price Comparison Results ---\n")
-    for brand, products in ranked_groups.items():
-        print(f"Brand: {brand}")
-        for product in products:
-            print(f"  - Title: {product['title']}")
-            print(f"    Price: ₹{product['price']}")
-            print(f"    Price per Unit: {product['price_per_unit']} ₹/kg or ₹/L")
-            print(f"    Link: {product['link']}")
-        print("\n")
+    print("-" * 90)
+    count=0
+    for product in ranked_products:
+        title =product['title']
+        price = product['price']
+        price_per_unit = product['price_per_unit']
+        store = "Amazon" if "amazon" in product['link'] else "JioMart"
+        link=product['link']
+        print(f"Title: {title}")
+        print(f"Price: {price}")
+        print(f"Price per Unit: {price_per_unit}")
+        print(f"Store: {store}")
+        print(f"Link: {link}\n")
+        count=count+1
+    print(f"Total number of products: {count}")

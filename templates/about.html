@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Grocery Price Comparison{% endblock %}
+
+{% block content %}
+<div class="about-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h1 class="mb-4 text-center">About GroceryCompare</h1>
+                
+                <div class="card mb-5">
+                    <div class="card-body">
+                        <h2 class="card-title">Our Mission</h2>
+                        <p class="card-text">
+                            GroceryCompare was created with a simple mission: to help consumers save money on their grocery shopping by providing transparent price comparisons across multiple online platforms.
+                        </p>
+                        <p class="card-text">
+                            In today's digital age, consumers have more options than ever when it comes to purchasing groceries online. However, with so many different platforms and retailers, it can be time-consuming and challenging to find the best deals. GroceryCompare solves this problem by aggregating product information and prices from various sources, allowing you to make informed decisions quickly and easily.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mb-5">
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card text-center">
+                            <div class="icon-container mb-3">
+                                <i class="fas fa-search fa-3x"></i>
+                            </div>
+                            <h3>Real-time Search</h3>
+                            <p>Our platform searches multiple online grocery retailers in real-time to ensure you get the most up-to-date pricing information.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card text-center">
+                            <div class="icon-container mb-3">
+                                <i class="fas fa-balance-scale fa-3x"></i>
+                            </div>
+                            <h3>Price Comparison</h3>
+                            <p>We normalize prices across different package sizes and units to provide fair and accurate comparisons.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card text-center">
+                            <div class="icon-container mb-3">
+                                <i class="fas fa-piggy-bank fa-3x"></i>
+                            </div>
+                            <h3>Save Money</h3>
+                            <p>By comparing prices across multiple platforms, you can find the best deals and save money on your grocery shopping.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-5">
+                    <div class="card-body">
+                        <h2 class="card-title">How It Works</h2>
+                        <ol class="how-it-works">
+                            <li>
+                                <h4>Search for Products</h4>
+                                <p>Enter the name of the grocery item you're looking for in the search box.</p>
+                            </li>
+                            <li>
+                                <h4>Compare Prices</h4>
+                                <p>Our system searches multiple online retailers and displays the results in a clear, easy-to-understand format.</p>
+                            </li>
+                            <li>
+                                <h4>Make Informed Decisions</h4>
+                                <p>Compare prices, package sizes, and price per unit to find the best value for your money.</p>
+                            </li>
+                            <li>
+                                <h4>Shop with Confidence</h4>
+                                <p>Click through to the retailer of your choice to complete your purchase, knowing you've found the best deal.</p>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">Start Comparing Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

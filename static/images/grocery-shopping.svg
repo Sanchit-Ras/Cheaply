@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f9fa" />
+      <stop offset="100%" stop-color="#e9ecef" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg-gradient)" />
+  
+  <!-- Shopping cart -->
+  <g transform="translate(400, 250) scale(1.5)">
+    <path d="M0,0 L-80,0 L-100,-120 L40,-120 L20,0 Z" fill="#4e54c8" stroke="#343a40" stroke-width="3" />
+    <circle cx="-60" cy="20" r="15" fill="#8f94fb" stroke="#343a40" stroke-width="2" />
+    <circle cx="-20" cy="20" r="15" fill="#8f94fb" stroke="#343a40" stroke-width="2" />
+    
+    <!-- Grocery items in cart -->
+    <g transform="translate(-70, -100)">
+      <circle cx="0" cy="0" r="12" fill="#ff6b6b" />
+      <circle cx="30" cy="-10" r="10" fill="#28a745" />
+      <rect x="50" y="-15" width="20" height="25" rx="2" fill="#ffc107" />
+      <rect x="10" y="15" width="15" height="20" rx="2" fill="#17a2b8" />
+      <circle cx="40" cy="15" r="8" fill="#6f42c1" />
+    </g>
+  </g>
+  
+  <!-- Price tags -->
+  <g transform="translate(200, 150)">
+    <rect x="0" y="0" width="60" height="30" rx="5" fill="#ff6b6b" />
+    <text x="30" y="20" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="white">$2.99</text>
+  </g>
+  
+  <g transform="translate(600, 200)">
+    <rect x="0" y="0" width="60" height="30" rx="5" fill="#28a745" />
+    <text x="30" y="20" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="white">$1.49</text>
+  </g>
+  
+  <g transform="translate(500, 350)">
+    <rect x="0" y="0" width="60" height="30" rx="5" fill="#ffc107" />
+    <text x="30" y="20" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="white">$3.99</text>
+  </g>
+  
+  <g transform="translate(250, 300)">
+    <rect x="0" y="0" width="60" height="30" rx="5" fill="#17a2b8" />
+    <text x="30" y="20" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="white">$0.99</text>
+  </g>
+</svg> 

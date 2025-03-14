@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Grocery Price Comparison{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4 mb-4">Compare Grocery Prices</h1>
+                <p class="lead mb-5">Find the best deals on groceries from multiple online stores in one place.</p>
+                <div class="search-container">
+                    <form action="{{ url_for('search') }}" method="POST" class="search-form">
+                        <div class="input-group mb-3">
+                            <input type="text" name="query" class="form-control form-control-lg" placeholder="Search for groceries (e.g., rice, milk, detergent)" value="{{ query if query else '' }}" required>
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if results %}
+<div class="results-section py-5">
+    <div class="container">
+        <h2 class="mb-4">Search Results for "{{ query }}"</h2>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Weight</th>
+                        <th>Price per Unit</th>
+                        <th>Source</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in results %}
+                    <tr class="product-row {% if loop.index == 1 %}best-value{% endif %}">
+                        <td>
+                            <div class="product-info">
+                                <img src="{{ product.image_url }}" alt="{{ product.title }}" class="product-thumbnail">
+                                <div>
+                                    <h5 class="product-title">{{ product.title }}</h5>
+                                </div>
+                            </div>
+                        </td>
+                        <td>₹{{ product.price }}</td>
+                        <td>{{ product.weight }}</td>
+                        <td>
+                            {% if product.price_per_unit != "N/A" %}
+                                ₹{{ product.price_per_unit }}/unit
+                                {% if loop.index == 1 %}<span class="badge bg-success">Best Value</span>{% endif %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>{{ product.source }}</td>
+                        <td>
+                            <a href="{{ product.link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-external-link-alt"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="about-section py-5" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="mb-4">About GroceryCompare</h2>
+                <p>GroceryCompare is a powerful tool designed to help you save money on your grocery shopping by comparing prices across multiple online platforms.</p>
+                <p>Our mission is to provide consumers with transparent price information, enabling them to make informed purchasing decisions and maximize their savings.</p>
+                <p>With GroceryCompare, you can:</p>
+                <ul>
+                    <li>Compare prices from major online grocery retailers</li>
+                    <li>Find the best deals on your favorite products</li>
+                    <li>Save time by searching multiple stores at once</li>
+                    <li>Make smarter shopping decisions based on price per unit</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <div class="about-image-container">
+                    <img src="{{ url_for('static', filename='images/grocery-shopping.svg') }}" alt="Grocery Shopping" class="img-fluid rounded">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

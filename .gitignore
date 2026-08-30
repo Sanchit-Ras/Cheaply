@@ -1,0 +1,31 @@
+# Secrets - never commit
+.env
+
+# Java / Gradle
+cheaply-backend/build/
+cheaply-backend/.gradle/
+*.class
+
+# Python
+__pycache__/
+*.py[cod]
+scraper-service/.venv/
+.venv/
+venv/
+.pytest_cache/
+
+# Node (frontend)
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

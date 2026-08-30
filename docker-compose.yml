@@ -1,0 +1,129 @@
+# Cheaply - full stack.
+#
+# Secrets live in ./.env (see .env.example); nothing sensitive is inlined
+# here. Postgres and Redis are bound to localhost only, and the scraper is
+# not published to the host at all - the backend reaches it on the internal
+# network, and it is the only thing that should.
+
+services:
+  # 1. PostgreSQL database
+  cheaply-db:
+    image: postgres:16-alpine
+    container_name: cheaply-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cheaply_db}
+      POSTGRES_USER: ${POSTGRES_USER:-cheaply_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    ports:
+      # High host port: a native PostgreSQL commonly owns 5432 already.
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cheaply-network
+
+  # 2. Redis cache / token denylist
+  cheaply-redis:
+    image: redis:7-alpine
+    container_name: cheaply-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}"]
+    ports:
+      - "127.0.0.1:16379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $${REDIS_PASSWORD} ping | grep PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    networks:
+      - cheaply-network
+
+  # 3. Python scraper service (internal only - deliberately no ports:)
+  cheaply-scraper:
+    build:
+      context: ./scraper-service
+      dockerfile: Dockerfile
+    container_name: cheaply-scraper
+    restart: unless-stopped
+    environment:
+      - FLASK_DEBUG=false
+      - PORT=5000
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY:?set SCRAPER_API_KEY in .env}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - cheaply-network
+
+  # 4. Spring Boot backend API
+  cheaply-backend:
+    build:
+      context: ./cheaply-backend
+      dockerfile: Dockerfile
+    container_name: cheaply-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cheaply-db:5432/${POSTGRES_DB:-cheaply_db}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-cheaply_user}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATA_REDIS_HOST=cheaply-redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - SCRAPER_SERVICE_URL=http://cheaply-scraper:5000
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY}
+      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET in .env (generate with openssl rand -hex 32)}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    healthcheck:
+      # busybox wget ships with the alpine JRE image; curl does not.
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    depends_on:
+      cheaply-db:
+        condition: service_healthy
+      cheaply-redis:
+        condition: service_healthy
+      cheaply-scraper:
+        condition: service_healthy
+    networks:
+      - cheaply-network
+
+  # 5. React frontend (nginx serving the built bundle, proxying /api)
+  cheaply-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cheaply-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      cheaply-backend:
+        condition: service_healthy
+    networks:
+      - cheaply-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  cheaply-network:
+    driver: bridge

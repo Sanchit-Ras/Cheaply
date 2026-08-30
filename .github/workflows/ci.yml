@@ -23,6 +23,12 @@ jobs:
       - name: Set up Gradle (with cache)
         uses: gradle/actions/setup-gradle@v4
 
+      # The repository records gradlew as executable (mode 100755), but
+      # Windows checkouts cannot preserve that bit locally. This guards
+      # against the mode being lost if the file is ever re-added there.
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
       - name: Run tests
         run: ./gradlew test --no-daemon
 
